@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: kitchen-app
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: "kitchen"
+        orgId: 1
+        folder: "Kitchen"
+        type: file
+        options:
+          path: /var/lib/grafana/dashboards
+  kitchen-app-dashboard.json: |
+    {
+      "title": "Kitchen App — Overview",
+      "refresh": "10s",
+      "schemaVersion": 39,
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Orders created (total)",
+          "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+          "datasource": "Prometheus",
+          "targets": [{ "expr": "kitchen_orders_created_total", "refId": "A" }]
+        },
+        {
+          "type": "timeseries",
+          "title": "HTTP requests / sec",
+          "gridPos": { "h": 8, "w": 18, "x": 6, "y": 0 },
+          "datasource": "Prometheus",
+          "targets": [{ "expr": "sum by (route) (rate(http_requests_total[1m]))", "refId": "A" }]
+        }
+      ],
+      "time": { "from": "now-15m", "to": "now" },
+      "timezone": "browser"
+    }
