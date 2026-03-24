@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Kitchen App</title></head>
+<body>
+  <h1>Kitchen Orders</h1>
+  <button onclick="createOrder()">Place Order</button>
+  <ul id="orders"></ul>
+  <script>
+    const API = 'http://localhost:3000';
+    async function load() {
+      const r = await fetch(API + '/orders');
+      const data = await r.json();
+      document.getElementById('orders').innerHTML = data.map(o => `<li>${o.dish} — ${o.status}</li>`).join('');
+    }
+    async function createOrder() {
+      const dish = prompt('Enter dish name:');
+      if (!dish) return;
+      await fetch(API + '/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dish }) });
+      load();
+    }
+    load();
+  </script>
+</body>
+</html>
